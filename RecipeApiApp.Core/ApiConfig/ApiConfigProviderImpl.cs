@@ -13,11 +13,12 @@ namespace RecipeApiApp.Core.ApiConfig
         public ApiConfigSettings GetApiConfigSettings()
         {
             string path =
-                AppDomain.CurrentDomain.BaseDirectory + "appSettings.json";
+                AppDomain.CurrentDomain.BaseDirectory +
+                "apiConfigSettings.json";
 
+            string json = File.ReadAllText(path);
             ApiConfigSettings settings =
-                JsonSerializer
-                    .Deserialize<ApiConfigSettings>(File.ReadAllText(path));
+                JsonSerializer.Deserialize<ApiConfigSettings>(json);
 
             return settings;
         }
