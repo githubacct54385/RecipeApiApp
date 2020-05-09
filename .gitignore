@@ -1,0 +1,5 @@
+bin
+obj
+.vscode
+RecipeApiApp.Api/appsettings.Development.json
+RecipeApiApp.Api/appsettings.json
