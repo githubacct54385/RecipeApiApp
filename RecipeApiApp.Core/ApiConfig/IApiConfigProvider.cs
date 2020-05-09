@@ -1,7 +1,5 @@
-namespace RecipeApiApp.Core.ApiConfig
-{
-    public interface IApiConfigProvider
-    {
-        ApiConfigSettings GetApiConfigSettings();
+namespace RecipeApiApp.Core.ApiConfig {
+    public interface IApiConfigProvider {
+        ApiConfigSettings GetApiConfigSettings ();
     }
 }

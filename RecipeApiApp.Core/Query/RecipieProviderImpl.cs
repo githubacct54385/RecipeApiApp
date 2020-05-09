@@ -37,10 +37,23 @@ namespace RecipeApiApp.Core.Query {
             }
 
         private ApiConfigSettings ApiSettings () {
-            IApiConfigRepository apiSettingsRepo =
-                new ApiConfigRepositoryImpl (new ApiConfigProviderImpl ());
+            IApiConfigRepository configRepository;
+            if (IsProduction ()) {
+                configRepository = new ApiConfigRepositoryImpl (new EnvironmentVarsConfigProviderImpl ());
+                return configRepository.GetSettings ();
 
-            return apiSettingsRepo.GetSettings ();
+            } else {
+                configRepository =
+                    new ApiConfigRepositoryImpl (new ApiConfigProviderImpl ());
+                return configRepository.GetSettings ();
+            }
+        }
+
+        private bool IsProduction () {
+            string env = System.Environment.GetEnvironmentVariable ("RecipeApi_Environment");
+            if (string.IsNullOrEmpty (env)) return false;
+            if (env.ToLower () == "production") return true;
+            return false;
         }
 
         private RecipePayload MissingSearchTermResponse (string searchTerm) {
