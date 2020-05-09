@@ -29,8 +29,12 @@ jobs:
     - name: Display the path
       run: echo $PATH
       shell: bash
+      
     - name: Display the publish Directory
-      run: cd ${{env.DOTNET_ROOT}}/myapp && echo $PWD 
+      run: cd ${{env.DOTNET_ROOT}}/myapp && echo $PWD
+      
+    - name: Display files in the publish Directory
+      run: cd ${{env.DOTNET_ROOT}}/myapp && ls 
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v1
