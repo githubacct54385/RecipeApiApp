@@ -1,13 +1,19 @@
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using RecipeApiApp.Core.ApiConfig;
+using RecipeApiApp.Core.Errors;
 using RecipeApiApp.Core.Models;
 using RestSharp;
 
 namespace RecipeApiApp.Core.Query {
     public sealed class RecipieProviderImpl : IRecipeProvider {
-        public RecipieProviderImpl () { }
+        private readonly IErrorWriter _errorWriter;
+
+        public RecipieProviderImpl (IErrorWriter errorWriter) {
+            _errorWriter = errorWriter;
+        }
 
         public async Task<RecipePayload>
             GetRecipientsFromSearch (string searchTerm) {
@@ -27,13 +33,20 @@ namespace RecipeApiApp.Core.Query {
                 request.AddQueryParameter ("app_id", appId);
                 request.AddQueryParameter ("app_key", appKey);
 
-                IRestResponse<RecipePayload> response =
-                    await client.ExecuteAsync<RecipePayload> (request);
+                try {
 
-                if (response.IsSuccessful) {
-                    return response.Data;
+                    IRestResponse<RecipePayload> response =
+                        await client.ExecuteAsync<RecipePayload> (request);
+
+                    if (response.IsSuccessful) {
+                        return response.Data;
+                    }
+                    return ErrorResponse (response, searchTerm);
+
+                } catch (System.Exception ex) {
+                    _errorWriter.Write (ex);
+                    return ExceptionResponse (ex, searchTerm);
                 }
-                return ErrorResponse (response, searchTerm);
             }
 
         private ApiConfigSettings ApiSettings () {
@@ -63,6 +76,17 @@ namespace RecipeApiApp.Core.Query {
             errorPayload.From = 0;
             errorPayload.To = 10;
             errorPayload.Warning = "Search term cannot be emtpy or null.";
+            errorPayload.Hits = new List<Hit> ();
+            return errorPayload;
+        }
+
+        private RecipePayload ExceptionResponse (Exception ex, string searchTerm) {
+            RecipePayload errorPayload = new RecipePayload ();
+            errorPayload.Count = 0;
+            errorPayload.Q = searchTerm;
+            errorPayload.From = 0;
+            errorPayload.To = 10;
+            errorPayload.Warning = ex.Message;
             errorPayload.Hits = new List<Hit> ();
             return errorPayload;
         }
