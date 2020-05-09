@@ -25,6 +25,12 @@ jobs:
 
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+    
+    - name: Display the path
+      run: echo $PATH
+      shell: bash
+    - name: Display the publish Directory
+      run: cd ${{env.DOTNET_ROOT}}/myapp && echo $PWD 
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v1
