@@ -34,7 +34,7 @@ jobs:
       run: cd ${{env.DOTNET_ROOT}}/myapp && echo $PWD
       
     - name: Display files in the publish Directory
-      run: cd ${{env.DOTNET_ROOT}}/myapp && ls 
+      run: cd ${{env.DOTNET_ROOT}}/myapp/RecipeApiApp.Api && ls
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v1
