@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RecipeApiApp.Core.ApiConfig;
 using RecipeApiApp.Core.Errors;
 using RecipeApiApp.Core.Models;
 using RecipeApiApp.Core.Query;
@@ -12,7 +13,7 @@ namespace RecipeApiApp.Api.Controllers {
         [Route ("SearchRecipes/{searchTerm}")]
         public async Task<RecipePayload> SearchRecipes (string searchTerm) {
             RecipeLookup recipeLookup =
-                new RecipeLookup (new RecipieProviderImpl (new FileWriter ()));
+                new RecipeLookup (new RecipieProviderImpl (new SlackChatWriter (new EnvironmentVarsConfigProviderImpl ())));
             RecipePayload recipePayload =
                 await recipeLookup.SearchRecipes (searchTerm);
             return recipePayload;
