@@ -7,6 +7,10 @@ on:
   push:
     branches:
       - master
+env:
+  AZURE_WEBAPP_NAME: recipeapiapp    # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '3.1.102'           # set this to the dot net version to use
 
 jobs:
   build-and-deploy:
@@ -18,18 +22,22 @@ jobs:
     - name: Set up .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.102'
+        dotnet-version: ${{env.DOTNET_VERSION}} #'3.1.102'
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
 
     - name: dotnet publish
-      run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      run: dotnet publish -c Release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp
 
     - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v1
-      with:
-        app-name: 'recipeapiapp'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_e606484f69a5467fa855fc81db030cd7 }}
-        package: ${{env.DOTNET_ROOT}}/myapp 
+      uses: azure/webapps-deploy@v2
+      with: 
+          app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_e606484f69a5467fa855fc81db030cd7 }} # Define secret variable in repository settings as per action documentation
+          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+      #with:
+      #  app-name: 'recipeapiapp'
+      #  slot-name: 'production'
+      #  publish-profile: ${{ secrets.AzureAppService_PublishProfile_e606484f69a5467fa855fc81db030cd7 }}
+      #  package: ${{env.DOTNET_ROOT}}/myapp 
