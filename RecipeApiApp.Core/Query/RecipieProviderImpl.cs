@@ -52,7 +52,9 @@ namespace RecipeApiApp.Core.Query {
         private ApiConfigSettings ApiSettings () {
             IApiConfigRepository configRepository;
             if (IsProduction ()) {
-                configRepository = new ApiConfigRepositoryImpl (new EnvironmentVarsConfigProviderImpl ());
+                IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
+                ConfigurationRoot root = new ConfigurationRoot (providers);
+                configRepository = new ApiConfigRepositoryImpl (new EnvironmentVarsConfigProviderImpl (root));
                 return configRepository.GetSettings ();
 
             } else {
