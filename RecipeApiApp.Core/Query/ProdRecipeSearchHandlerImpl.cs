@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,8 @@ namespace RecipeApiApp.Core.Query {
             IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
             providers.Add (new EnvironmentVariablesConfigurationProvider ());
             ConfigurationRoot root = new ConfigurationRoot (providers);
+            Console.WriteLine (root.GetDebugView ());
+            Console.WriteLine ("Env App Id" + root["RecipeApi_AppId"]);
             _errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (root));
         }
         public async Task<RecipePayload> Search (string searchTerm) {
