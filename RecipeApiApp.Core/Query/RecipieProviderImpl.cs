@@ -28,6 +28,13 @@ namespace RecipeApiApp.Core.Query {
                 // todo remove later
                 _errorWriter.WriteString (appId + "   " + appKey);
 
+                if (string.IsNullOrEmpty (appId)) {
+                    throw new System.Exception ("AppId is null or empty");
+                }
+                if (string.IsNullOrEmpty (appKey)) {
+                    throw new System.Exception ("AppKey is null or empty.");
+                }
+
                 RestRequest request = new RestRequest ("search", Method.GET);
                 request.AddQueryParameter ("q", searchTerm);
                 request.AddQueryParameter ("app_id", appId);
