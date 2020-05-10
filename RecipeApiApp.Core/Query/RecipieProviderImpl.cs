@@ -46,7 +46,7 @@ namespace RecipeApiApp.Core.Query {
                     return ErrorResponse (response, searchTerm);
 
                 } catch (System.Exception ex) {
-                    _errorWriter.Write (ex);
+                    _errorWriter.WriteException (ex);
                     return RecipeErrorResponses.ExceptionResponse (ex, searchTerm);
                 }
             }

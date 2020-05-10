@@ -22,6 +22,8 @@ namespace RecipeApiApp.Api.Controllers {
         [Route ("Search/{searchTerm}")]
         public async Task<RecipePayload> SearchRecipes (string searchTerm) {
             try {
+                TestTraceWrite ();
+
                 RuntimeSetting setting = GetRuntimeSetting ();
                 IRecipeSearchHandler recipeSearchHandler;
                 if (setting == RuntimeSetting.Development) {
@@ -40,6 +42,11 @@ namespace RecipeApiApp.Api.Controllers {
             }
         }
 
+        private void TestTraceWrite () {
+            IErrorWriter errorWriter = new AzureTraceWriter ();
+            errorWriter.WriteString ("Hello World!");
+        }
+
         private void HandleEx (Exception ex) {
             RuntimeSetting setting = GetRuntimeSetting ();
             IErrorWriter errorWriter;
@@ -48,7 +55,7 @@ namespace RecipeApiApp.Api.Controllers {
             } else {
                 errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (_configuration));
             }
-            errorWriter.Write (ex);
+            errorWriter.WriteException (ex);
         }
 
         private RuntimeSetting GetRuntimeSetting () {

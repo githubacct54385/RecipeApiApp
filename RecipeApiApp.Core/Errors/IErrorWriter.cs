@@ -2,6 +2,7 @@ using System;
 
 namespace RecipeApiApp.Core.Errors {
     public interface IErrorWriter {
-        void Write (Exception ex);
+        void WriteException (Exception ex);
+        void WriteString (string s);
     }
 }
