@@ -25,6 +25,9 @@ namespace RecipeApiApp.Core.Query {
                 string appId = _configuration.GetValue<string> ("RecipeApi_AppId");
                 string appKey = _configuration.GetValue<string> ("RecipeApi_AppKey");
 
+                // todo remove later
+                _errorWriter.WriteString (appId + "   " + appKey);
+
                 RestRequest request = new RestRequest ("search", Method.GET);
                 request.AddQueryParameter ("q", searchTerm);
                 request.AddQueryParameter ("app_id", appId);
