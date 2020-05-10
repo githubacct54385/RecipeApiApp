@@ -26,10 +26,6 @@ namespace RecipeApiApp.Api {
             services.AddControllers ();
 
             services.AddSingleton<IConfiguration> (Configuration);
-            // Configure services
-            // services.Configure<ApiConfigSettings> (Configuration.GetSection ("ApiConfigSettings"));
-            // services.AddOptions ();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
