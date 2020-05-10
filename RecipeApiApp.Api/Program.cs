@@ -17,7 +17,6 @@ namespace RecipeApiApp.Api {
             Host
             .CreateDefaultBuilder (args)
             .ConfigureAppConfiguration ((hostingContext, config) => {
-                config.AddJsonFile ("appSettings.Development.json", optional : true, reloadOnChange : false);
                 config.AddEnvironmentVariables ();
             })
             .ConfigureWebHostDefaults (webBuilder => {
