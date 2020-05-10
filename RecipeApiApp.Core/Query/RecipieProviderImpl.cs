@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using RecipeApiApp.Core.ApiConfig;
 using RecipeApiApp.Core.Env;
 using RecipeApiApp.Core.Errors;
@@ -53,6 +54,7 @@ namespace RecipeApiApp.Core.Query {
             IApiConfigRepository configRepository;
             if (IsProduction ()) {
                 IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
+                providers.Add (new EnvironmentVariablesConfigurationProvider ());
                 ConfigurationRoot root = new ConfigurationRoot (providers);
                 configRepository = new ApiConfigRepositoryImpl (new EnvironmentVarsConfigProviderImpl (root));
                 return configRepository.GetSettings ();
