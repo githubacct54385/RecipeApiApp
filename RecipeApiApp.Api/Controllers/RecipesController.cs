@@ -22,8 +22,6 @@ namespace RecipeApiApp.Api.Controllers {
         [Route ("Search/{searchTerm}")]
         public async Task<RecipePayload> SearchRecipes (string searchTerm) {
             try {
-                TestSlackWrite ();
-
                 RuntimeSetting setting = GetRuntimeSetting ();
                 IRecipeSearchHandler recipeSearchHandler;
                 if (setting == RuntimeSetting.Development) {
