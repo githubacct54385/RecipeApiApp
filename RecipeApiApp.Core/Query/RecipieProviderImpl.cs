@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using RecipeApiApp.Core.ApiConfig;
+using RecipeApiApp.Core.Env;
 using RecipeApiApp.Core.Errors;
 using RecipeApiApp.Core.Models;
 using RestSharp;
@@ -45,7 +44,7 @@ namespace RecipeApiApp.Core.Query {
 
                 } catch (System.Exception ex) {
                     _errorWriter.Write (ex);
-                    return ExceptionResponse (ex, searchTerm);
+                    return RecipeErrorResponses.ExceptionResponse (ex, searchTerm);
                 }
             }
 
@@ -63,10 +62,10 @@ namespace RecipeApiApp.Core.Query {
         }
 
         private bool IsProduction () {
-            string env = System.Environment.GetEnvironmentVariable ("RecipeApi_Environment");
-            if (string.IsNullOrEmpty (env)) return false;
-            if (env.ToLower () == "production") return true;
-            return false;
+            RecipeApiEnv apiEnv = new RecipeApiEnv (new RuntimeEnvProviderImpl ());
+            var settings = apiEnv.GetSettings ();
+            if (settings == RuntimeSetting.Production) return true;
+            else return false;
         }
 
         private RecipePayload MissingSearchTermResponse (string searchTerm) {
@@ -76,17 +75,6 @@ namespace RecipeApiApp.Core.Query {
             errorPayload.From = 0;
             errorPayload.To = 10;
             errorPayload.Warning = "Search term cannot be emtpy or null.";
-            errorPayload.Hits = new List<Hit> ();
-            return errorPayload;
-        }
-
-        private RecipePayload ExceptionResponse (Exception ex, string searchTerm) {
-            RecipePayload errorPayload = new RecipePayload ();
-            errorPayload.Count = 0;
-            errorPayload.Q = searchTerm;
-            errorPayload.From = 0;
-            errorPayload.To = 10;
-            errorPayload.Warning = ex.Message;
             errorPayload.Hits = new List<Hit> ();
             return errorPayload;
         }
