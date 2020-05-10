@@ -25,9 +25,6 @@ namespace RecipeApiApp.Core.Query {
                 string appId = _configuration.GetValue<string> ("RecipeApi_AppId");
                 string appKey = _configuration.GetValue<string> ("RecipeApi_AppKey");
 
-                // todo remove later
-                _errorWriter.WriteString (appId + "   " + appKey);
-
                 if (string.IsNullOrEmpty (appId)) {
                     throw new System.Exception ("AppId is null or empty");
                 }
