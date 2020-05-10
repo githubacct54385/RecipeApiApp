@@ -16,6 +16,7 @@ namespace RecipeApiApp.Core.Query {
             providers.Add (new EnvironmentVariablesConfigurationProvider ());
             ConfigurationRoot root = new ConfigurationRoot (providers);
             Console.WriteLine (root.GetDebugView ());
+            System.Diagnostics.Trace.TraceError ("If you're seeing this, something bad happened");
             Console.WriteLine ("Env App Id" + root["RecipeApi_AppId"]);
             _errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (root));
         }
