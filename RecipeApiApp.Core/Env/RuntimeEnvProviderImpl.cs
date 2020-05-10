@@ -8,7 +8,6 @@ namespace RecipeApiApp.Core.Env {
         }
         public RuntimeSetting GetRuntimeEnv () {
             string runtimeEnv = _configuration["RecipeApi_Environment"];
-            // string runtimeEnv = System.Environment.GetEnvironmentVariable ("RecipeApi_Environment");
 
             switch (runtimeEnv) {
                 case "Production":

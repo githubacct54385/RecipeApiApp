@@ -7,12 +7,9 @@ namespace RecipeApiApp.Core.ApiConfig {
             _configuration = configuration;
         }
         public ApiConfigSettings GetApiConfigSettings () {
-            // string appId = System.Environment.GetEnvironmentVariable ("RecipeApi_AppId");
-            // string appKey = System.Environment.GetEnvironmentVariable ("RecipeApi_AppKey");
-            // string slackSecret = System.Environment.GetEnvironmentVariable ("RecipeApi_SlackSecret");
-            string appId = _configuration["RecipeApi_AppId"];
-            string appKey = _configuration["RecipeApi_AppKey"];
-            string slackSecret = _configuration["RecipeApi_SlackSecret"];
+            string appId = _configuration.GetSection ("ApiConfigSettings") ["AppId"];
+            string appKey = _configuration.GetSection ("ApiConfigSettings") ["AppKey"];
+            string slackSecret = _configuration.GetSection ("ApiConfigSettings") ["SlackSecret"];
 
             return new ApiConfigSettings (appKey, appKey, slackSecret);
         }

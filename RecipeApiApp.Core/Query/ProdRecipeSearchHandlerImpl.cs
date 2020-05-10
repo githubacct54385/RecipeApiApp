@@ -11,17 +11,13 @@ using RecipeApiApp.Core.Models;
 namespace RecipeApiApp.Core.Query {
     public sealed class ProdRecipeSearchHandlerImpl : IRecipeSearchHandler {
         private readonly IErrorWriter _errorWriter;
-        public ProdRecipeSearchHandlerImpl () {
-            IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
-            providers.Add (new EnvironmentVariablesConfigurationProvider ());
-            ConfigurationRoot root = new ConfigurationRoot (providers);
-            Console.WriteLine (root.GetDebugView ());
-            System.Diagnostics.Trace.TraceError ("If you're seeing this, something bad happened");
-            Console.WriteLine ("Env App Id" + root["RecipeApi_AppId"]);
-            _errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (root));
+        private readonly IConfiguration _configuration;
+        public ProdRecipeSearchHandlerImpl (IConfiguration configuration) {
+            _configuration = configuration;
+            _errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (configuration));
         }
         public async Task<RecipePayload> Search (string searchTerm) {
-            RecipieProviderImpl recipieProvider = new RecipieProviderImpl (_errorWriter);
+            RecipieProviderImpl recipieProvider = new RecipieProviderImpl (_errorWriter, _configuration);
 
             RecipeLookup recipeLookup =
                 new RecipeLookup (recipieProvider);

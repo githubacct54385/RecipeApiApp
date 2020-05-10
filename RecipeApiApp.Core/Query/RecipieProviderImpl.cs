@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using RecipeApiApp.Core.ApiConfig;
 using RecipeApiApp.Core.Env;
 using RecipeApiApp.Core.Errors;
@@ -11,9 +10,11 @@ using RestSharp;
 namespace RecipeApiApp.Core.Query {
     public sealed class RecipieProviderImpl : IRecipeProvider {
         private readonly IErrorWriter _errorWriter;
+        private readonly IConfiguration _configuration;
 
-        public RecipieProviderImpl (IErrorWriter errorWriter) {
+        public RecipieProviderImpl (IErrorWriter errorWriter, IConfiguration configuration) {
             _errorWriter = errorWriter;
+            _configuration = configuration;
         }
 
         public async Task<RecipePayload>
@@ -53,10 +54,7 @@ namespace RecipeApiApp.Core.Query {
         private ApiConfigSettings ApiSettings () {
             IApiConfigRepository configRepository;
             if (IsProduction ()) {
-                IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
-                providers.Add (new EnvironmentVariablesConfigurationProvider ());
-                ConfigurationRoot root = new ConfigurationRoot (providers);
-                configRepository = new ApiConfigRepositoryImpl (new EnvironmentVarsConfigProviderImpl (root));
+                configRepository = new ApiConfigRepositoryImpl (new EnvironmentVarsConfigProviderImpl (_configuration));
                 return configRepository.GetSettings ();
 
             } else {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using RecipeApiApp.Core.ApiConfig;
 using RecipeApiApp.Core.Env;
 using RecipeApiApp.Core.Errors;
@@ -14,19 +13,23 @@ namespace RecipeApiApp.Api.Controllers {
     [ApiController]
     [Route ("[controller]")]
     public class RecipesController : ControllerBase {
+        private readonly IConfiguration _configuration;
+        public RecipesController (IConfiguration configuration) {
+            _configuration = configuration;
+        }
+
         [HttpGet]
         [Route ("Search/{searchTerm}")]
         public async Task<RecipePayload> SearchRecipes (string searchTerm) {
             try {
-
                 RuntimeSetting setting = GetRuntimeSetting ();
                 IRecipeSearchHandler recipeSearchHandler;
                 if (setting == RuntimeSetting.Development) {
                     // setup for dev
-                    recipeSearchHandler = new DevRecipeSearchHandlerImpl ();
+                    recipeSearchHandler = new DevRecipeSearchHandlerImpl (_configuration);
                 } else {
                     // setup for prod
-                    recipeSearchHandler = new ProdRecipeSearchHandlerImpl ();
+                    recipeSearchHandler = new ProdRecipeSearchHandlerImpl (_configuration);
                 }
 
                 RecipePayload payload = await recipeSearchHandler.Search (searchTerm);
@@ -43,18 +46,16 @@ namespace RecipeApiApp.Api.Controllers {
             if (setting == RuntimeSetting.Development) {
                 errorWriter = new SlackChatWriter (new ApiConfigProviderImpl ());
             } else {
-                IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
-                providers.Add (new EnvironmentVariablesConfigurationProvider ());
-                ConfigurationRoot root = new ConfigurationRoot (providers);
-                errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (root));
+                // IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
+                // providers.Add (new EnvironmentVariablesConfigurationProvider ());
+                // ConfigurationRoot root = new ConfigurationRoot (providers);
+                errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (_configuration));
             }
             errorWriter.Write (ex);
         }
 
-        private static RuntimeSetting GetRuntimeSetting () {
-            IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
-            ConfigurationRoot root = new ConfigurationRoot (providers);
-            RecipeApiEnv apiEnv = new RecipeApiEnv (new RuntimeEnvProviderImpl (root));
+        private RuntimeSetting GetRuntimeSetting () {
+            RecipeApiEnv apiEnv = new RecipeApiEnv (new RuntimeEnvProviderImpl (_configuration));
             return apiEnv.GetSettings ();
         }
     }
