@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using RecipeApiApp.Core.ApiConfig;
 using RecipeApiApp.Core.Env;
 using RecipeApiApp.Core.Errors;
@@ -46,7 +48,9 @@ namespace RecipeApiApp.Api.Controllers {
         }
 
         private static RuntimeSetting GetRuntimeSetting () {
-            RecipeApiEnv apiEnv = new RecipeApiEnv (new RuntimeEnvProviderImpl ());
+            IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
+            ConfigurationRoot root = new ConfigurationRoot (providers);
+            RecipeApiEnv apiEnv = new RecipeApiEnv (new RuntimeEnvProviderImpl (root));
             return apiEnv.GetSettings ();
         }
     }

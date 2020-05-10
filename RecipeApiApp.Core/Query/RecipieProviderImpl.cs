@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using RecipeApiApp.Core.ApiConfig;
 using RecipeApiApp.Core.Env;
 using RecipeApiApp.Core.Errors;
@@ -62,7 +63,9 @@ namespace RecipeApiApp.Core.Query {
         }
 
         private bool IsProduction () {
-            RecipeApiEnv apiEnv = new RecipeApiEnv (new RuntimeEnvProviderImpl ());
+            IList<IConfigurationProvider> providers = new List<IConfigurationProvider> ();
+            ConfigurationRoot root = new ConfigurationRoot (providers);
+            RecipeApiEnv apiEnv = new RecipeApiEnv (new RuntimeEnvProviderImpl (root));
             var settings = apiEnv.GetSettings ();
             if (settings == RuntimeSetting.Production) return true;
             else return false;
