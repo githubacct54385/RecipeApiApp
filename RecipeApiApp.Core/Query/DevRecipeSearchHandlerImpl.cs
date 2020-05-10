@@ -9,7 +9,7 @@ namespace RecipeApiApp.Core.Query {
         private readonly IErrorWriter _errorWriter;
         private readonly IConfiguration _configuration;
         public DevRecipeSearchHandlerImpl (IConfiguration configuration) {
-            _errorWriter = new SlackChatWriter (new ApiConfigProviderImpl ());
+            _errorWriter = new SlackChatWriter (new ApiConfigProviderImpl (configuration));
             _configuration = configuration;
         }
         public async Task<RecipePayload> Search (string searchTerm) {

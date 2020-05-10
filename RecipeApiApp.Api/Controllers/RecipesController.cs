@@ -51,7 +51,7 @@ namespace RecipeApiApp.Api.Controllers {
             RuntimeSetting setting = GetRuntimeSetting ();
             IErrorWriter errorWriter;
             if (setting == RuntimeSetting.Development) {
-                errorWriter = new SlackChatWriter (new ApiConfigProviderImpl ());
+                errorWriter = new SlackChatWriter (new ApiConfigProviderImpl (_configuration));
             } else {
                 errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (_configuration));
             }

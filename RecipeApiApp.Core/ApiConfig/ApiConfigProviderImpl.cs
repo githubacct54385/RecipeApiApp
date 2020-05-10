@@ -1,26 +1,22 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
-namespace RecipeApiApp.Core.ApiConfig
-{
-    public sealed class ApiConfigProviderImpl : IApiConfigProvider
-    {
-        public ApiConfigProviderImpl()
-        {
+namespace RecipeApiApp.Core.ApiConfig {
+    public sealed class ApiConfigProviderImpl : IApiConfigProvider {
+        private readonly IConfiguration _configuration;
+        public ApiConfigProviderImpl (IConfiguration configuration) {
+            _configuration = configuration;
         }
 
-        public ApiConfigSettings GetApiConfigSettings()
-        {
-            string path =
-                AppDomain.CurrentDomain.BaseDirectory +
-                "apiConfigSettings.json";
+        public ApiConfigSettings GetApiConfigSettings () {
 
-            string json = File.ReadAllText(path);
-            ApiConfigSettings settings =
-                JsonSerializer.Deserialize<ApiConfigSettings>(json);
+            string appId = _configuration["ApiConfigSettings:AppId"];
+            string appKey = _configuration["ApiConfigSettings:AppKey"];
+            string slackSecret = _configuration["ApiConfigSettings:SlackSecret"];
 
-            return settings;
+            return new ApiConfigSettings (appId, appKey, slackSecret);
         }
     }
 }

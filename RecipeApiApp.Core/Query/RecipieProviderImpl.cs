@@ -59,7 +59,7 @@ namespace RecipeApiApp.Core.Query {
 
             } else {
                 configRepository =
-                    new ApiConfigRepositoryImpl (new ApiConfigProviderImpl ());
+                    new ApiConfigRepositoryImpl (new ApiConfigProviderImpl (_configuration));
                 return configRepository.GetSettings ();
             }
         }
