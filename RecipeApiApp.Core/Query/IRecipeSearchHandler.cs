@@ -3,6 +3,6 @@ using RecipeApiApp.Core.Models;
 
 namespace RecipeApiApp.Core.Query {
     public interface IRecipeSearchHandler {
-        Task<RecipePayload> Search (string searchTerm);
+        Task<RecipePayload> Search (SearchParams searchParams);
     }
 }

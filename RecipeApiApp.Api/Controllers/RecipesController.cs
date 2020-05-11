@@ -19,8 +19,8 @@ namespace RecipeApiApp.Api.Controllers {
         }
 
         [HttpGet]
-        [Route ("Search/{searchTerm}")]
-        public async Task<RecipePayload> SearchRecipes (string searchTerm) {
+        [Route ("Search/{searchTerm}/{from}/{to}")]
+        public async Task<RecipePayload> SearchRecipes (string searchTerm, int from = 0, int to = 10) {
             try {
                 RuntimeSetting setting = GetRuntimeSetting ();
                 IRecipeSearchHandler recipeSearchHandler;
@@ -32,17 +32,14 @@ namespace RecipeApiApp.Api.Controllers {
                     recipeSearchHandler = new ProdRecipeSearchHandlerImpl (_configuration);
                 }
 
-                RecipePayload payload = await recipeSearchHandler.Search (searchTerm);
+                SearchParams searchParams = new SearchParams (searchTerm, from, to);
+
+                RecipePayload payload = await recipeSearchHandler.Search (searchParams);
                 return payload;
             } catch (System.Exception ex) {
                 HandleEx (ex);
                 return RecipeErrorResponses.ExceptionResponse (ex, searchTerm);
             }
-        }
-
-        private void TestSlackWrite () {
-            IErrorWriter errorWriter = new SlackChatWriter (new EnvironmentVarsConfigProviderImpl (_configuration));
-            errorWriter.WriteString ("Hello World!");
         }
 
         private void HandleEx (Exception ex) {

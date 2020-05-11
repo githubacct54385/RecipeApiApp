@@ -8,18 +8,22 @@ namespace RecipeApiApp.Core.Query {
     public sealed class DevRecipeSearchHandlerImpl : IRecipeSearchHandler {
         private readonly IErrorWriter _errorWriter;
         private readonly IConfiguration _configuration;
+        private readonly IApiConfigProvider _apiConfigProvider;
+        private readonly IRecipeSearchProvider _searchProvider;
         public DevRecipeSearchHandlerImpl (IConfiguration configuration) {
             _errorWriter = new SlackChatWriter (new ApiConfigProviderImpl (configuration));
             _configuration = configuration;
+            _searchProvider = new RecipeSearchProviderImpl (_errorWriter);
+            _apiConfigProvider = new ApiConfigProviderImpl (_configuration);
         }
-        public async Task<RecipePayload> Search (string searchTerm) {
-            RecipieProviderImpl recipieProvider = new RecipieProviderImpl (_errorWriter, _configuration);
+        public async Task<RecipePayload> Search (SearchParams searchParams) {
+            RecipeProviderImpl recipieProvider = new RecipeProviderImpl (_errorWriter, _apiConfigProvider, _searchProvider);
 
             RecipeLookup recipeLookup =
-                new RecipeLookup (recipieProvider);
+                new RecipeLookup (recipieProvider, _configuration);
 
             RecipePayload recipePayload =
-                await recipeLookup.SearchRecipes (searchTerm);
+                await recipeLookup.SearchRecipes (searchParams);
             return recipePayload;
         }
     }
