@@ -13,7 +13,7 @@ namespace RecipeApiApp.Core.Env {
         }
 
         public bool IsProdEnv () {
-            string runtimeEnv = _configuration.GetValue<string> ("RecipeApiApp_Environment") ?? "";
+            string runtimeEnv = _configuration.GetValue<string> ("RecipeApiApp_Environment");
             return runtimeEnv == "Production";
         }
     }
