@@ -6,15 +6,15 @@ namespace RecipeApiApp.Core.Env {
         public RuntimeEnvProviderImpl (IConfiguration configuration) {
             _configuration = configuration;
         }
-        public RuntimeSetting GetRuntimeEnv () {
-            string runtimeEnv = _configuration["RecipeApi_Environment"];
 
-            switch (runtimeEnv) {
-                case "Production":
-                    return RuntimeSetting.Production;
-                default:
-                    return RuntimeSetting.Development;
-            }
+        public bool IsDevEnv () {
+            bool localEnv = _configuration.GetValue<bool> ("RecipeApiAppLocalEnv");
+            return localEnv;
+        }
+
+        public bool IsProdEnv () {
+            string runtimeEnv = _configuration.GetValue<string> ("RecipeApiApp_Environment") ?? "";
+            return runtimeEnv == "Production";
         }
     }
 }

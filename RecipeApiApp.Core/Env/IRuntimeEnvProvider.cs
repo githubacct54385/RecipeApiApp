@@ -1,5 +1,6 @@
 namespace RecipeApiApp.Core.Env {
     public interface IRuntimeEnvProvider {
-        RuntimeSetting GetRuntimeEnv ();
+        bool IsProdEnv ();
+        bool IsDevEnv ();
     }
 }

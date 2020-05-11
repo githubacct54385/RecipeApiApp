@@ -24,12 +24,22 @@ namespace RecipeApiApp.Api.Controllers {
             try {
                 RuntimeSetting setting = GetRuntimeSetting ();
                 IRecipeSearchHandler recipeSearchHandler;
-                if (setting == RuntimeSetting.Development) {
-                    // setup for dev
-                    recipeSearchHandler = new DevRecipeSearchHandlerImpl (_configuration);
-                } else {
-                    // setup for prod
-                    recipeSearchHandler = new ProdRecipeSearchHandlerImpl (_configuration);
+
+                switch (setting) {
+                    case RuntimeSetting.Production:
+                        // setup for prod
+                        recipeSearchHandler = new ProdRecipeSearchHandlerImpl (_configuration);
+                        break;
+                    case RuntimeSetting.Development:
+                        // setup for dev
+                        recipeSearchHandler = new DevRecipeSearchHandlerImpl (_configuration);
+                        break;
+                    case RuntimeSetting.Both:
+                        return RuntimeMisconfiguration (RuntimeSetting.Both, searchTerm, from, to);
+                    case RuntimeSetting.Neither:
+                        return RuntimeMisconfiguration (RuntimeSetting.Neither, searchTerm, from, to);
+                    default:
+                        return RuntimeMisconfiguration (RuntimeSetting.Unknown, searchTerm, from, to);
                 }
 
                 SearchParams searchParams = new SearchParams (searchTerm, from, to);
@@ -40,6 +50,32 @@ namespace RecipeApiApp.Api.Controllers {
                 HandleEx (ex);
                 return RecipeErrorResponses.ExceptionResponse (ex, searchTerm);
             }
+        }
+
+        private RecipePayload RuntimeMisconfiguration (RuntimeSetting runtimeSetting, string searchTerm, int from, int to) {
+            RecipePayload payload = new RecipePayload ();
+            payload.Q = searchTerm;
+            payload.From = from;
+            payload.To = to;
+            payload.More = false;
+            payload.Hits = new List<Hit> ();
+            payload.Count = 0;
+
+            switch (runtimeSetting) {
+                case RuntimeSetting.Both:
+                    payload.Warning = "Configuration Error: Both Dev and Prod config are set.";
+                    break;
+                case RuntimeSetting.Neither:
+                    payload.Warning = "Configuration Error: Neither Dev and Prod config are set.";
+                    break;
+                case RuntimeSetting.Unknown:
+                    payload.Warning = "Configuration Error: Unknown Config setting.";
+                    break;
+                default:
+                    payload.Warning = "Configuration Error: Unknown Config setting.";
+                    break;
+            }
+            return payload;
         }
 
         private void HandleEx (Exception ex) {
