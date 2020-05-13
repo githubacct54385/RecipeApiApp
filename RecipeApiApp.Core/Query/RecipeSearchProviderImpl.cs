@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using RecipeApiApp.Core.ApiConfig;
 using RecipeApiApp.Core.Errors;
 using RecipeApiApp.Core.Models;
 using RestSharp;
